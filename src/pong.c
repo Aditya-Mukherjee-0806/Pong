@@ -287,7 +287,7 @@ void handlePadCollision(COLLIDER collider)
         break;
     case RIGHT_PAD:
         y_offset = right_paddle.rect.y + right_paddle.rect.h / 2 - ball.circle.y;
-        if (abs(y_offset) > right_paddle.rect.h / 2)
+        if (fabs(y_offset) > right_paddle.rect.h / 2)
             return;
         else
         {
