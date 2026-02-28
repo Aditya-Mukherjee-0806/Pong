@@ -338,6 +338,10 @@ void Level_Init()
         .x = (double)rand() / RAND_MAX * 2 - 1,
         .y = (double)rand() / RAND_MAX - 0.5,
     };
+    if(ball_dir.x < 0)
+        ball_dir.x = SDL_min(ball_dir.x, -0.5);
+    else
+        ball_dir.x = SDL_max(ball_dir.x, 0.5);
     ball_speed = INIT_BALL_SPEED;
     ball = (BALL){
         .circle = {
