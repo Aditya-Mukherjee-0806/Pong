@@ -15,7 +15,9 @@
 #define PAD_ACCL 300
 #define PAD_RETD_FACTOR 2
 #define BALL_R 20
-#define BALL_SPEED 500
+#define INIT_BALL_SPEED 500
+#define BALL_SPEED_GROWTH_FACTOR 10
+#define BALL_SPEED_INC (INIT_BALL_SPEED / BALL_SPEED_GROWTH_FACTOR)
 
 typedef enum
 {
@@ -45,6 +47,7 @@ const double dt = 1.0 / FPS;
 SDL_Renderer *renderer;
 int left_score = 0, right_score = 0;
 SDL_bool point_scored = SDL_FALSE;
+double ball_speed;
 
 void updateBallPos();
 void updatePaddlePos();
@@ -250,11 +253,13 @@ COLLIDER detectPossiblePadCollision()
     // detect left pad collision
     if (ball.circle.x - ball.circle.r < left_paddle.rect.x + left_paddle.rect.w)
     {
+        ball_speed += BALL_SPEED_INC;
         return LEFT_PAD;
     }
     // detect right pad collision
     else if (ball.circle.x + ball.circle.r > right_paddle.rect.x)
     {
+        ball_speed += BALL_SPEED_INC;
         return RIGHT_PAD;
     }
     else
@@ -282,7 +287,7 @@ void handlePadCollision(COLLIDER collider)
                 .x = cos(angle),
                 .y = sin(angle),
             };
-            ball.vel = VEC2_Scale(ball_dir, BALL_SPEED);
+            ball.vel = VEC2_Scale(ball_dir, ball_speed);
         }
         break;
     case RIGHT_PAD:
@@ -299,7 +304,7 @@ void handlePadCollision(COLLIDER collider)
                 .x = -cos(angle),
                 .y = sin(angle),
             };
-            ball.vel = VEC2_Scale(ball_dir, BALL_SPEED);
+            ball.vel = VEC2_Scale(ball_dir, ball_speed);
         }
         break;
     default:
@@ -333,14 +338,14 @@ void Level_Init()
         .x = (double)rand() / RAND_MAX * 2 - 1,
         .y = (double)rand() / RAND_MAX - 0.5,
     };
-
+    ball_speed = INIT_BALL_SPEED;
     ball = (BALL){
         .circle = {
             .x = WIN_W / 2,
             .y = WIN_H / 2,
             .r = BALL_R,
         },
-        .vel = VEC2_Scale(VEC2_Normalised(ball_dir), BALL_SPEED),
+        .vel = VEC2_Scale(VEC2_Normalised(ball_dir), ball_speed),
     };
 }
 
